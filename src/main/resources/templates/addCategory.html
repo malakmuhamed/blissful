@@ -1,0 +1,26 @@
+<html xmlns="http://www.thymeleaf.org">
+    <head>
+        <title>Add</title>
+        <link rel="stylesheet" href="/css/addcategory.css">
+       
+    </head>
+    <body>
+       
+       
+        
+            <h2> Add category</h2>
+            <form th:action="@{/addCategory}" th:object="${category}" method="POST">
+                <input type="text" th:field="*{name}" placeholder="Enter Category name">
+                <br><br>
+                <input type="submit">
+                <br><br>
+                <a href="/">Go to Home</a>
+               
+            </form>
+        
+        
+        
+
+
+    </body>
+</html>
