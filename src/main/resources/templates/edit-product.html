@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Product</title>
+    <style>
+        /* Style for the category select box */
+        #category {
+            height: 200px; /* Set the height of the select box */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+    </style>
+</head>
+<body>
+    <h2>Edit Product</h2>
+    <form th:action="@{'/editprod/' + ${product.id}}" method="post">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" th:value="${product.name}" required><br><br>
+        
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price" th:value="${product.price}" required><br><br>
+        
+        <label for="category">Category:</label><br>
+        <select id="category" name="category">
+            <option th:each="category : ${categories}" th:value="${category.id}"
+                    th:text="${category.name}" th:selected="${category.id == product.category.id}"></option>
+        </select><br><br>
+        
+        <label for="offer">Offer:</label><br>
+        <input type="text" id="offer" name="offer" th:value="${product.offer}"><br><br>
+        
+        <label for="quantity">Quantity:</label><br>
+        <input type="number" id="quantity" name="quantity" th:value="${product.quantity}" required><br><br>
+        
+        <button type="submit">Save</button>
+    </form>
+    <a href="/">Go to Home</a>
+</body>
+</html>

@@ -10,6 +10,7 @@
 <th>Id</th>
 <th>name</th>
 <th>price</th>
+<th>offer</th>
 <th>category</th>
         </tr>
     </thead>
@@ -18,7 +19,9 @@
 <td th:text="${prods.id}"/>
 <td th:text="${prods.name}"/>
 <td th:text="${prods.price}"/>
+<td th:text="${prods.offer}"/>
 <td th:text="${prods.category.name}"/>
+<td><a th:href="@{'/editprod/' + ${prods.id}}">Edit</a></td>
         </tr>
     </tbody>
 </table>
