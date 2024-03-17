@@ -1,0 +1,37 @@
+<html xmlns:th="http://wwww.thymleaf.org">
+<head>
+    <title>List food</title>
+</head>
+<body>
+    <h2>List food</h2>
+<table>
+    <thead>
+        <tr>
+<th>Id</th>
+<th>name</th>
+<th>price</th>
+<th>category</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="prods: ${prods}">
+<td th:text="${prods.id}"/>
+<td th:text="${prods.name}"/>
+<td th:text="${prods.price}"/>
+<td th:text="${prods.category.name}"/>
+        </tr>
+    </tbody>
+</table>
+<a href="/">GO TO ZEFT</a>
+
+</body>
+
+
+
+
+
+
+
+
+
+</html>

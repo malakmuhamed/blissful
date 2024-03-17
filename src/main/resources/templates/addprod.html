@@ -1,0 +1,46 @@
+<html xmlns:th="http://wwww.thymleaf.org">
+    <head>
+        <title>
+            Add
+        </title>
+        <link rel="stylesheet" href="/css/addprod.css">
+    </head>
+    <body>
+<h2>Add product:</h2>
+
+  
+    
+<form th:action="@{/addprod}" th:object="${prod}" method="POST" enctype="multipart/form-data">
+    <label for="category">Category:</label>
+    <select id="category" name="category">
+        <option value="">Select Category</option>
+        <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
+        <input type="hidden" id="category_id" name="category_id" value="">
+    </select>
+    <label for="name">Product Name:</label><br>
+    <input type="text" id="name" th:field="*{name}" required><br><br>
+    
+    <label for="price">Product Price:</label><br>
+    <input type="number" id="price" th:field="*{price}" required><br><br>
+    
+    <label for="offer">Offer (if any):</label><br>
+    <input type="text" id="offer" th:field="*{offer}"><br><br>
+    
+    <label for="photo">Product Photo:</label><br>
+    <input type="file" id="photo" name="file" accept="image/*" required><br><br>
+    
+    <label for="quantity">Product Quantity:</label><br>
+    <input type="number" id="quantity" th:field="*{quantity}" required><br><br>
+    
+    <button type="submit">Submit</button>
+</form>
+
+<a href="/">List of Categories Includes The products</a>
+<script>
+   
+    document.getElementById("category").addEventListener("change", function() {
+        document.getElementById("category_id").value = this.value;
+    });
+</script>
+    </body>
+</html>

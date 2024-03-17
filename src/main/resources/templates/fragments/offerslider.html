@@ -1,0 +1,77 @@
+<section class="offerslider">
+    <div class="container">
+    
+      <section class="section shop" id="shop" aria-label="shop" data-section>
+        <div class="container">
+
+          <div class="title-wrapper">
+            <h2 class="h2 section-title">OUR OFFERS$</h2>
+
+            <a href="#" class="btn-link">
+              <span class="span">Shop All Products</span>
+
+              <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+            </a>
+          </div>
+
+          <ul class="has-scrollbar">
+
+            <li class="scrollbar-item" th:each="prod : ${prods}" th:if="${prod.offer > 0}">
+              <div class="shop-card">
+                  <div class="card-banner img-holder" style="--width: 540; --height: 720;">
+                      <img th:src="@{/images/{photo}(photo=${prod.photo})}" width="540" height="720" loading="lazy" alt="Product Image" class="img-cover">
+                      <!-- <span class="badge" aria-label="Offer" th:text="${prod.offer}% OFF"></span> -->
+                      <div class="card-actions">
+                          <button class="action-btn" aria-label="Add to Cart">
+                              <ion-icon name="bag-handle-outline" aria-hidden="true"></ion-icon>
+                          </button>
+                          <button class="action-btn" aria-label="Add to Wishlist">
+                              <ion-icon name="star-outline" aria-hidden="true"></ion-icon>
+                          </button>
+                          <button class="action-btn" aria-label="Compare">
+                              <ion-icon name="repeat-outline" aria-hidden="true"></ion-icon>
+                          </button>
+                      </div>
+                  </div>
+                  <div class="card-content">
+                      <div class="price">
+                          <del class="del"><span th:text="${prod.price}+'$'"></span></del>
+                          <span class="span"><span th:text="${prod.discountedPrice}+'$'"></span></span>
+                      </div>
+                      </div>
+                      
+                      <h3>
+                          <a href="#" class="card-title" th:text="${prod.name}"></a>
+                      </h3> 
+                     
+                      <div class="card-rating">
+                          <div class="rating-wrapper" aria-label="5 star rating">
+                              <ion-icon name="star" aria-hidden="true"></ion-icon>
+                              <ion-icon name="star" aria-hidden="true"></ion-icon>
+                              <ion-icon name="star" aria-hidden="true"></ion-icon>
+                              <ion-icon name="star" aria-hidden="true"></ion-icon>
+                              <ion-icon name="star" aria-hidden="true"></ion-icon>
+                          </div>
+                          <p class="rating-text">5170 reviews</p>
+                      </div>
+                  </div>
+              </div>
+          </li> 
+        
+          </div>
+          </div>
+          
+      </div>    
+     
+</div>
+           </div>
+          </ul>
+        </div>
+        
+      </section>
+
+
+
+
+
+ 

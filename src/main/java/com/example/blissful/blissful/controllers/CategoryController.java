@@ -32,11 +32,7 @@ public class CategoryController {
         return mav;
     }
     
-@GetMapping("/home")
-public ModelAndView gethome() {
-    ModelAndView mav = new ModelAndView("index.html");
-    return mav;
-}
+
 @GetMapping("/admindashboard")
     public ModelAndView getAdminDashboard() {
         ModelAndView mav = new ModelAndView("admindashboard.html");
