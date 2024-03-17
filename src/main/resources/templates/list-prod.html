@@ -1,9 +1,10 @@
 <html xmlns:th="http://wwww.thymleaf.org">
 <head>
-    <title>List food</title>
+    <title>List of products</title>
+    <link rel="stylesheet" th:href="@{/css/list-prod.css}" />
 </head>
 <body>
-    <h2>List food</h2>
+    <h2>List Of products</h2>
 <table>
     <thead>
         <tr>
@@ -12,6 +13,7 @@
 <th>price</th>
 <th>offer</th>
 <th>category</th>
+<th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -20,12 +22,14 @@
 <td th:text="${prods.name}"/>
 <td th:text="${prods.price}"/>
 <td th:text="${prods.offer}"/>
+
 <td th:text="${prods.category.name}"/>
+
 <td><a th:href="@{'/editprod/' + ${prods.id}}">Edit</a></td>
         </tr>
     </tbody>
 </table>
-<a href="/">GO TO ZEFT</a>
+<a href="/">GO TO ALL LIST OF CATEGORIES</a>
 
 </body>
 

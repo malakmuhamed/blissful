@@ -30,7 +30,7 @@ public class CategoryController {
         mav.addObject("categories", categories);
         return mav;
     }
-
+    
     @GetMapping("addCategory")
     public ModelAndView addCategory() {
         ModelAndView mav = new ModelAndView("addCategory.html");
