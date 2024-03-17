@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/list-users.css">
+    <title>Users</title>
+</head>
+
+<body>
+    <!-- Only show the search form if the user is an admin -->
+    <div th:if="${session.type == 'admin'}">
+        <!-- Your search form code here -->
+    </div>
+    <form th:action="@{/user/search}" method="GET">
+        <input type="text" name="username" placeholder="Search by username">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Display the searched username -->
+    <p th:if="${searchedUsername}">Search results for: <strong th:text="${searchedUsername}"></strong></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Date of Birth</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${userslist}">
+                <td th:text="${user.id}" />
+                <td th:text="${user.username}" />
+                <td th:text="${user.email}" />
+                <td th:text="${user.dob}" />
+                <td th:text="${user.type}" />
+            </tr>
+        </tbody>
+    </table>
+    <a href="./user/registeration">ADD</a>
+    <a href="./user/login">LOGIN</a>
+
+</body>
+
+</html>

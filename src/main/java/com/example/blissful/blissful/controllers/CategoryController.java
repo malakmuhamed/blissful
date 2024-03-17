@@ -15,8 +15,7 @@ import com.example.blissful.blissful.models.product;
 import com.example.blissful.blissful.repository.CategoryRepository;
 import com.example.blissful.blissful.repository.ProductRepository;
 
-
-@Controller 
+@Controller
 @RequestMapping("/")
 public class CategoryController {
     @Autowired
@@ -31,13 +30,7 @@ public class CategoryController {
         mav.addObject("categories", categories);
         return mav;
     }
-    
 
-@GetMapping("/admindashboard")
-    public ModelAndView getAdminDashboard() {
-        ModelAndView mav = new ModelAndView("admindashboard.html");
-       return mav;
-    }
     @GetMapping("addCategory")
     public ModelAndView addCategory() {
         ModelAndView mav = new ModelAndView("addCategory.html");
@@ -52,49 +45,48 @@ public class CategoryController {
         return "redirect:/"; // Redirect to the homepage after saving the category
     }
 
-    
-
     @GetMapping("/category/{id}")
-public ModelAndView getCategory(@PathVariable("id") int id) {
-    ModelAndView mav = new ModelAndView("list-prod.html");
-    List<product>prods=this.productRepository.findAllByCategoryId(id);
-    mav.addObject("prods", prods);
-    return mav;
-}
-
-@GetMapping("/editprod/{id}")
-public ModelAndView editProduct(@PathVariable("id") int id) {
-    ModelAndView mav = new ModelAndView("edit-product.html"); 
-    product product = this.productRepository.findById(id).orElse(null); // Find the product by its ID
-    if (product != null) {
-        mav.addObject("product", product); // Add the product to the model
-        List<Category> categories = this.categoryRepository.findAll(); // Fetch all categories for the select box
-        mav.addObject("categories", categories); // Add categories to the model
-    } else {
-        // Handle case where product is not found
-        mav.addObject("errorMessage", "Product not found");
+    public ModelAndView getCategory(@PathVariable("id") int id) {
+        ModelAndView mav = new ModelAndView("list-prod.html");
+        List<product> prods = this.productRepository.findAllByCategoryId(id);
+        mav.addObject("prods", prods);
+        return mav;
     }
-    return mav;
-}
 
-@PostMapping("/editprod/{id}")
-public String updateProduct(@PathVariable("id") int id, @ModelAttribute product updatedProduct) {
-    product existingProduct = this.productRepository.findById(id).orElse(null); // Find the existing product by its ID
-    if (existingProduct != null) {
-        // Update the existing product with the new data
-        existingProduct.setName(updatedProduct.getName());
-        existingProduct.setPrice(updatedProduct.getPrice());
-        existingProduct.setOffer(updatedProduct.getOffer());
-        existingProduct.setQuantity(updatedProduct.getQuantity());
-        existingProduct.setCategory(updatedProduct.getCategory());
-        // Save the updated product
-        this.productRepository.save(existingProduct);
-    } else {
-        // Handle case where product is not found
-        return "redirect:/"; // Redirect to the homepage or an error page
+    @GetMapping("/editprod/{id}")
+    public ModelAndView editProduct(@PathVariable("id") int id) {
+        ModelAndView mav = new ModelAndView("edit-product.html");
+        product product = this.productRepository.findById(id).orElse(null); // Find the product by its ID
+        if (product != null) {
+            mav.addObject("product", product); // Add the product to the model
+            List<Category> categories = this.categoryRepository.findAll(); // Fetch all categories for the select box
+            mav.addObject("categories", categories); // Add categories to the model
+        } else {
+            // Handle case where product is not found
+            mav.addObject("errorMessage", "Product not found");
+        }
+        return mav;
     }
-    return "redirect:/category/" + existingProduct.getCategory().getId(); // Redirect to the category page after successful update
-}
 
+    @PostMapping("/editprod/{id}")
+    public String updateProduct(@PathVariable("id") int id, @ModelAttribute product updatedProduct) {
+        product existingProduct = this.productRepository.findById(id).orElse(null); // Find the existing product by its
+                                                                                    // ID
+        if (existingProduct != null) {
+            // Update the existing product with the new data
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setOffer(updatedProduct.getOffer());
+            existingProduct.setQuantity(updatedProduct.getQuantity());
+            existingProduct.setCategory(updatedProduct.getCategory());
+            // Save the updated product
+            this.productRepository.save(existingProduct);
+        } else {
+            // Handle case where product is not found
+            return "redirect:/"; // Redirect to the homepage or an error page
+        }
+        return "redirect:/category/" + existingProduct.getCategory().getId(); // Redirect to the category page after
+                                                                              // successful update
+    }
 
 }

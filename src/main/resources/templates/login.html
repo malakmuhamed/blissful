@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://wwww.thymleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <title> Account</title>
+
+</head>
+
+<body>
+
+    <br>
+    <div class="small-header">
+        Home /
+        <span class="section">
+            Account
+        </span>
+    </div>
+    <div class="big-sectionName">
+        ACCOUNT
+    </div>
+    <div class="All3squares">
+        <div class="square1">
+            <h2 class="h3-title-bold-uppercase">
+                RETURNING
+                CUSTOMER, TROUBLE LOGGING IN?
+                <p class="sq1-small-writing">We updated our shopping experience.
+                    If you haven’t logged in recently and are having trouble,
+                    please reset your password to login.</p>
+            </h2>
+            <a href="Edit.php"> <button class="acc-buttons"> RESET PASSWORD</button></a>
+            <br>
+            <br>
+            <a href="Delete.php"> <button class="acc-buttons"> Delete Account</button></a>
+        </div>
+        <form th:action="@{/user/login}" th:object="${user}" method="POST">
+            <!-- Your form content here -->
+            <div class="square2">
+                <h2 class="h3-title-bold-uppercase">
+                    SIGN IN
+                    <p class="sq1-small-writing">
+                        Sign in to your account to add
+                        or edit your addresses and
+                        email preferences, save
+                        your Pro Filt'r # to your profile and
+                        more.
+                    </p>
+
+                    <input type="email" th:field="*{email}" placeholder="Email">
+                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+
+                    <input type="password" th:field="*{password}" placeholder="Password">
+                    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                    <br>
+
+                    <span th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></span>
+
+
+
+
+                </h2>
+                <input class="acc-buttons" type="submit">
+            </div>
+        </form>
+        <div class="square3">
+            <h2 class="h3-title-bold-uppercase">
+                CREATE ACCOUNT
+                <h3 class="subtitle">
+                    GET YOUR FAVES FASTER
+
+                    <p class="sq1-small-writing">
+
+                        Save your order information to make checkout a breeze.
+                    </p>
+
+                </h3>
+                <h3 class="subtitle">
+                    EXCLUSIVE OFFERS + INFO
+
+                    <p class="sq1-small-writing">
+
+                        Sign up to stay posted on hyper-limited offers,
+                        online-only product drops, in-store events,
+                        and—as true Fenty and Rhode ,
+                        personal beauty tips from Rihanna herself.
+                    </p>
+
+                </h3>
+
+            </h2>
+            <br>
+            <a href="/user/registeration"> <button class="acc-buttons"> CREATE ACCOUNT</button></a>
+        </div>
+    </div>
+    <div class="square4">
+        <h2 class="h3-title-bold-uppercase">
+            CHECK YOUR ORDER STATUS
+            <p class="sq1-small-writing">
+                To check your order status, you may
+                SIGN IN, CREATE ACCOUNT, or click
+                the links found in your order confirmation
+                or shipping notification emails.</p>
+        </h2>
+    </div>
+    <span th:text="${session.username}"></span>
+
+</body>
+
+</html>
