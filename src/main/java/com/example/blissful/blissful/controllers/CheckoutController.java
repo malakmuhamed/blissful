@@ -16,6 +16,10 @@ public class CheckoutController {
         model.addAttribute("billingInfo", new BillingInfo());
         return "checkout";
     }
-
+    @PostMapping("/checkout")
+    public String submitForm(@ModelAttribute BillingInfo billingInfo) {
+        // Process the billing info (e.g., save to database)
+        return "checkoutSuccess";
+    }
    
 }
