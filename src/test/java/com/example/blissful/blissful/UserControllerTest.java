@@ -74,4 +74,23 @@ public class UserControllerTest {
         // Expecting one error message
 
     }
+
+    @Test
+    public void testSaveUser_WithExistingEmail_ReturnsError() {
+        // Prepare test data
+        user existingUser = new user();
+        existingUser.setEmail("shahd@gmail.com");
+        existingUser.setPassword("password");
+        String confirmPassword = "password";
+        when(userRepository.findByEmail("shahd@gmail.com")).thenReturn(existingUser);
+
+        // Call the method to be tested
+        ModelAndView mav = userController.saveUser(existingUser, bindingResult, confirmPassword, null);
+
+        // Assert the result
+        assertEquals("registeration.html", mav.getViewName()); // Should return to registration page
+        assertTrue(mav.getModel().containsKey("errorMessages")); // Expecting error messages
+        assertEquals(1, ((List<String>) mav.getModel().get("errorMessages")).size()); // Expecting one error message
+    }
+
 }
