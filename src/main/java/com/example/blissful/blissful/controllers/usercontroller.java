@@ -84,9 +84,9 @@ public class usercontroller {
         if (existingUser != null) {
             errorMessages.add("Email already exists. Please choose a different email.");
         }
-        if (!user.getUsername().matches("[a-zA-Z]+")) {
-            errorMessages.add("Username must contain only letters.");
-        }
+        // if (!user.getUsername().matches("[a-zA-Z]+")) {
+        // errorMessages.add("Username must contain only letters.");
+        // }
         // Validate password length
         if (user.getPassword().length() < 8) {
             errorMessages.add("Password must be at least 8 characters long.");
