@@ -93,4 +93,65 @@ public class UserControllerTest {
         assertEquals(1, ((List<String>) mav.getModel().get("errorMessages")).size()); // Expecting one error message
     }
 
+    @Test
+    public void testLogin_WithValidCredentials_RedirectsToHome() {
+        // Prepare test data
+        user existingUser = new user();
+        existingUser.setEmail("shahd@gmail.com");
+        existingUser.setPassword("$2a$12$0aW2KBC5z89vT1tOZLV99.CALdJK/MvS91RXQ/Sy5ten2Cug9IRBq"); // Correct hashed
+                                                                                                  // password
+
+        existingUser.setUsername("testuser");
+        existingUser.setType("user");
+
+        // Mock the behavior of userRepository.findByEmail
+        when(userRepository.findByEmail("shahd@gmail.com")).thenReturn(existingUser);
+
+        // Prepare user object for login
+        user loginUser = new user();
+        loginUser.setEmail("shahd@gmail.com");
+        loginUser.setPassword("1234567890"); // Correct hashed password
+
+        // Call the method to be tested
+        ModelAndView mav = userController.login(loginUser, bindingResult, new MockHttpSession());
+        // assertTrue(mav.getModel().containsKey("errorMessages")); // Expecting
+        // errormessages
+        // assertEquals("Invalid email or password",
+        // (mav.getModel().get("errorMessage")));
+
+        // Assert the result
+        assertEquals("redirect:/home", mav.getViewName()); // Should redirecttohome
+        // page
+    }
+
+    @Test
+    public void testLogin_WithInValidCredentials_RedirectsToLogin() {
+        // Prepare test data
+        user existingUser = new user();
+        existingUser.setEmail("shhd@gmail.com");
+        existingUser.setPassword("$2a$12$0aW2KBC5z89vT1tOZLV99.CALdJK/MvS91RXQ/Sy5ten2Cug9IRBq"); // Correct hashed
+                                                                                                  // password
+
+        existingUser.setUsername("testuser");
+        existingUser.setType("user");
+
+        // Mock the behavior of userRepository.findByEmail
+        when(userRepository.findByEmail("shhd@gmail.com")).thenReturn(existingUser);
+
+        // Prepare user object for login
+        user loginUser = new user();
+        loginUser.setEmail("shahd@gmail.com");
+        loginUser.setPassword("1234567890"); // Correct hashed password
+
+        // Call the method to be tested
+        ModelAndView mav = userController.login(loginUser, bindingResult, new MockHttpSession());
+        // assertTrue(mav.getModel().containsKey("errorMessages")); // Expecting
+        // errormessages
+        // assertEquals("Invalid email or password",
+        // (mav.getModel().get("errorMessage")));
+
+        // Assert the result
+        assertEquals("login.html", mav.getViewName()); // Should redirecttohome
+        // page
+    }
 }
