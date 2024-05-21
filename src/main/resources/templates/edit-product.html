@@ -10,25 +10,35 @@
 </head>
 <body>
     <h2>Edit Product</h2>
-    <form th:action="@{'/editprod/' + ${product.id}}" method="post">
+    <form th:action="@{'/editprod/' + ${product.id}}" method="post" th:object="${product}">
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" th:value="${product.name}" required><br><br>
-        
+        <input type="text" id="name" name="name" th:field="*{name}" required><br>
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
+        <br>
+
         <label for="price">Price:</label><br>
-        <input type="number" id="price" name="price" th:value="${product.price}" required><br><br>
-        
+        <input type="number" id="price" name="price" th:field="*{price}" required><br>
+        <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error"></div>
+        <br>
+
         <label for="category">Category:</label><br>
-        <select id="category" name="category">
+        <select id="category" name="category" th:field="*{category}">
             <option th:each="category : ${categories}" th:value="${category.id}"
                     th:text="${category.name}" th:selected="${category.id == product.category.id}"></option>
-        </select><br><br>
-        
+        </select><br>
+        <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="error"></div>
+        <br>
+
         <label for="offer">Offer:</label><br>
-        <input type="text" id="offer" name="offer" th:value="${product.offer}"><br><br>
-        
+        <input type="number" id="offer" name="offer" th:field="*{offer}"><br>
+        <div th:if="${#fields.hasErrors('offer')}" th:errors="*{offer}" class="error"></div>
+        <br>
+
         <label for="quantity">Quantity:</label><br>
-        <input type="number" id="quantity" name="quantity" th:value="${product.quantity}" required><br><br>
-        
+        <input type="number" id="quantity" name="quantity" th:field="*{quantity}" required><br>
+        <div th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="error"></div>
+        <br>
+
         <button type="submit">Save</button>
     </form>
     <a href="/">Go to Home</a>
