@@ -27,6 +27,11 @@ public class usercontroller {
     @Autowired
     private userrepo userRepository;
 
+    @Autowired
+    public usercontroller(userrepo userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @GetMapping("")
     public ModelAndView getUsers(HttpSession session) {
         ModelAndView mav = new ModelAndView("list-users.html");
