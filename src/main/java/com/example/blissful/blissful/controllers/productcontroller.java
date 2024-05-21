@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.blissful.blissful.models.Category;
 import com.example.blissful.blissful.models.product;
 import com.example.blissful.blissful.repository.CategoryRepository;
 import com.example.blissful.blissful.repository.ProductRepository;
 import org.springframework.util.StringUtils;
-
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 
 @Controller
 @RequestMapping("/")
@@ -43,52 +48,76 @@ public class productcontroller {
         return mav;
     }
 
-   @PostMapping("addprod")
-    public String saveprod(@ModelAttribute product product, @RequestParam("file") MultipartFile file) {
+    @PostMapping("addprod")
+    public String saveprod(@ModelAttribute @Validated product product,
+            @RequestParam("file") MultipartFile file,
+            BindingResult bindingResult,
+            Model model) {
+        List<String> errorMessages = new ArrayList<>();
+
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        product.setPhoto(filename);
+
+        // Validate product name
+        if (product.getName() == null || product.getName().isEmpty()) {
+            bindingResult.rejectValue("name", "error.name.required", "Product name is required.");
+            errorMessages.add("Product name is required.");
+        } else if (!product.getName().matches("[a-zA-Z]+")) {
+            bindingResult.rejectValue("name", "error.name.invalidFormat", "Product name must contain only letters.");
+            errorMessages.add("Product name must contain only letters.");
+        }
+        // Validate price
+        // Validate price
+        if (product.getPrice() <= 0) {
+            bindingResult.rejectValue("price", "error.price.invalidFormat", "Price must be a positive number.");
+            errorMessages.add("Price must be a positive number.");
+        } else if (product.getPrice() < 0) {
+            bindingResult.rejectValue("price", "error.price.invalidFormat", "Price cannot be negative.");
+            errorMessages.add("Price cannot be negative.");
+        }
+
+        // Validate offer
+        if (product.getOffer() < 0) {
+            bindingResult.rejectValue("offer", "error.offer.invalidFormat", "Offer must be a non-negative integer.");
+            errorMessages.add("Offer must be a non-negative integer.");
+        }
+
+        // Validate quantity
+        if (product.getQuantity() <= 0) {
+            bindingResult.rejectValue("quantity", "error.quantity.invalidFormat",
+                    "Quantity must be a positive integer.");
+            errorMessages.add("Quantity must be a positive integer.");
+        }
+
+        // Calculate the discounted price
+        double price = product.getPrice();
+        double offer = product.getOffer();
+        double discountedPrice = price - (price * (offer / 100.0));
+        product.setDiscountedPrice(discountedPrice);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("prod", product);
+            model.addAttribute("allCategories", categoryRepository.findAll());
+            model.addAttribute("errorMessages", errorMessages);
+            return "addprod";
+        }
+
+        // Save the product object to the database
         try {
-            
-            
-            if (file != null && !file.isEmpty()) {
-                String filename = StringUtils.cleanPath(file.getOriginalFilename());
-                if (filename.contains("..")) {
-                    System.out.println("Not a valid file");
-                    // Handle invalid file name
-                    return "error";
-                }
-                String uploadDir = "src/main/resources/static/images/";
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                try {
-                    // Copy the file to the upload directory
-                    Files.copy(file.getInputStream(), uploadPath.resolve(filename));
-                    // Set the photo path in the Product object
-                    product.setPhoto( filename);
-                } catch (IOException e) {
-                    System.out.println("Could not save the file: " + e.getMessage());
-                    // Handle file save exception
-                    return "error";
-                }
-            } else {
-                // Handle case where no file is uploaded
-                System.out.println("No file uploaded");
-                return "error";
-            }
-// Calculate the price after applying the offer
-double price = product.getPrice();
-double offer = product.getOffer();
-double discountedPrice = price - (price * (offer / 100.0));
-product.setDiscountedPrice(discountedPrice);
-            // Save the product object to the database
             productRepository.save(product);
         } catch (Exception e) {
             e.printStackTrace();
-            // Handle other exceptions
-            return "error";
+            // Handle database save exception
+            model.addAttribute("errorMessages", "An error occurred while saving the product.");
+            model.addAttribute("prod", product);
+            model.addAttribute("allCategories", categoryRepository.findAll());
+            return "addprod";
         }
-        return "redirect:/"; // Redirect to home page after successful operation
+
+        // Redirect to the home page after successful product addition
+        return "redirect:/";
     }
+
     @GetMapping("/deleteprod")
     public ModelAndView deleteprod() {
         ModelAndView mav = new ModelAndView("deleteprod.html");
@@ -96,14 +125,13 @@ product.setDiscountedPrice(discountedPrice);
         mav.addObject("allProducts", allProducts);
         return mav;
     }
-    
-   
+
     @PostMapping("/deleteprod")
     public String deleteprod(@RequestParam("productName") String productName) {
         try {
             // Retrieve the product(s) by its name
             List<product> productList = productRepository.findAllByName(productName);
-            
+
             if (!productList.isEmpty()) {
                 // Delete each product from the repository
                 for (product prod : productList) {
@@ -129,7 +157,5 @@ product.setDiscountedPrice(discountedPrice);
         }
         return "redirect:/"; // Redirect to home page after successful operation
     }
-    
-    
-}
 
+}
