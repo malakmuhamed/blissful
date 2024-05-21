@@ -53,4 +53,25 @@ public class UserControllerTest {
         assertEquals(1, ((List<String>) mav.getModel().get("errorMessages")).size());
         // Expecting one error message
     }
+
+    @Test
+    public void testSaveUser_WithMismatchedPasswords_ReturnsError() {
+        // Prepare test data
+        user newUser = new user();
+        newUser.setEmail("test@example.com");
+        newUser.setPassword("12345679");
+        String confirmPassword = "12345678"; // Confirm password doesn'tmatch
+
+        // Call the method to be tested
+        ModelAndView mav = userController.saveUser(newUser, bindingResult,
+                confirmPassword, null);
+
+        // Assert the result
+        assertEquals("registeration.html", mav.getViewName()); // Should return
+        // toregistration page
+        assertTrue(mav.getModel().containsKey("errorMessages")); // Expecting errormessages
+        assertEquals(1, ((List<String>) mav.getModel().get("errorMessages")).size());
+        // Expecting one error message
+
+    }
 }
