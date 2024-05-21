@@ -1,47 +1,84 @@
-<html xmlns:th="http://wwww.thymleaf.org">
-    <head>
-        <title>
-            Add
-        </title>
-        <link rel="stylesheet" href="/css/addprod.css">
-    </head>
-    <body>
-        
-<h2>Add product:</h2>
+<html xmlns:th="http://www.thymeleaf.org">
 
-  
-    
-<form th:action="@{/addprod}" th:object="${prod}" method="POST" enctype="multipart/form-data">
-    <label for="category">Category:</label>
-    <select id="category" name="category">
-        <option value="">Select Category</option>
-        <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
+<head>
+    <title>Add Product</title>
+    <link rel="stylesheet" href="/css/addprod.css">
+</head>
+
+<body>
+    <h2>Add product:</h2>
+
+    <form th:action="@{/addprod}" th:object="${prod}" method="POST" enctype="multipart/form-data">
+        <label for="category">Category:</label>
+        <select id="category" name="category">
+            <option value="">Select Category</option>
+            <option th:each="category : ${allCategories}" th:value="${category.id}" th:text="${category.name}"></option>
+        </select>
         <input type="hidden" id="category_id" name="category_id" value="">
-    </select>
-    <label for="name">Product Name:</label><br>
-    <input type="text" id="name" th:field="*{name}" required><br><br>
-    
-    <label for="price">Product Price:</label><br>
-    <input type="number" id="price" th:field="*{price}" required><br><br>
-    
-    <label for="offer">Offer (if any):</label><br>
-    <input type="text" id="offer" th:field="*{offer}"><br><br>
-    
-    <label for="photo">Product Photo:</label><br>
-    <input type="file" id="photo" name="file" accept="image/*" required><br><br>
-    
-    <label for="quantity">Product Quantity:</label><br>
-    <input type="number" id="quantity" th:field="*{quantity}" required><br><br>
-    
-    <button type="submit">Submit</button>
-</form>
 
-<a href="/">List of Categories Includes The products</a>
-<script>
-   
-    document.getElementById("category").addEventListener("change", function() {
-        document.getElementById("category_id").value = this.value;
-    });
-</script>
-    </body>
+        <label for="name">Product Name:</label><br>
+        <input type="text" id="name" th:field="*{name}" required>
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></div>
+
+        <label for="price">Product Price:</label><br>
+        <input type="number" id="price" th:field="*{price}" required>
+        <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-message"></div>
+
+        <label for="offer">Offer (if any):</label><br>
+        <input type="text" id="offer" th:field="*{offer}">
+        <div th:if="${#fields.hasErrors('offer')}" th:errors="*{offer}" class="error-message"></div>
+
+        <label for="photo">Product Photo:</label><br>
+        <input type="file" id="file" name="file" accept="image/jpeg, image/png" required>
+
+
+        <!-- 
+        <<label for="photo">Product Photo:</label><br>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+        <div th:if="${#fields.hasErrors('photo')}" th:errors="*{photo}" class="error-message"></div> -->
+        <!--  -->
+        <!-- <label for="photo">Product Photo:</label><br>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+        <div th:if="${#fields.hasErrors('photo')}" th:errors="*{photo}" class="error-message"></div> -->
+
+        <label for="quantity">Product Quantity:</label><br>
+        <input type="number" id="quantity" th:field="*{quantity}" required>
+        <div th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="error-message"></div>
+
+        <!-- <div th:if="${#fields.hasAnyErrors()}">
+            <div class="error-messages">
+                <ul>
+                    <li th:each="error : ${#fields.detailedErrors()}" th:text="${error.getMessage()}">Error</li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:if="${errorMessages != null}">
+            <div class="error-messages">
+                <ul>
+                    <li th:text="${errorMessages}">Error</li>
+                </ul>
+            </div>
+        </div> -->
+
+        <div th:if="${errorMessages != null}">
+            <div class="error-messages">
+                <ul>
+                    <li th:each="errorMessage : ${errorMessages}" th:text="${errorMessage}">Error</li>
+                </ul>
+            </div>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <a href="/">List of Categories Includes The products</a>
+
+    <script>
+        document.getElementById("category").addEventListener("change", function () {
+            document.getElementById("category_id").value = this.value;
+        });
+    </script>
+</body>
+
 </html>
