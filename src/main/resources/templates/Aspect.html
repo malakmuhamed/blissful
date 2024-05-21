@@ -1,0 +1,34 @@
+<html xmlns:th="http://wwww.thymleaf.org">
+
+<head>
+
+    <!-- userlogs.html -->
+
+    <title>List of User Logs</title>
+    <link rel="stylesheet" th:href="@{/css/list-prod.css}" />
+    <link rel="stylesheet" href="/css/list-users.css">
+
+</head>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Userid</th>
+                <th>Logintime</th>
+                <th>Pages Visited</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="userLog : ${userLogs}">
+                <td th:text="${userLog.id}" />
+                <td th:text="${userLog.userId}" />
+                <td th:text="${userLog.loginTime}" />
+                <td th:text="${userLog.pageVisited}" />
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
