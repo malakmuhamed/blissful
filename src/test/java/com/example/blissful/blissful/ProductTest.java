@@ -73,4 +73,26 @@ public class ProductTest {
         // assertNotNull(bindingResult.getFieldError("price"));
     }
 
+    @Test
+    public void testSuccessfulValidation() {
+
+        // Mock necessary objects
+        product product = new product();
+        product.setName("shahd");
+        product.setPrice(10);
+        product.setOffer(1);
+        product.setQuantity(1);
+        MultipartFile file = mock(MultipartFile.class);
+        BindingResult bindingResult = new BeanPropertyBindingResult(product, "product");
+
+        Model model = mock(Model.class);
+
+        String viewName = productController.saveprod(product, file, bindingResult, model);
+        // Debug: Print out the contents of the bindingResult
+
+        // Verify behavior
+        assertEquals("redirect:/", viewName); // Assuming the controller returns "addprod" in case of errors
+        assertFalse(bindingResult.hasErrors());
+        // assertNotNull(bindingResult.getFieldError("price"));
+    }
 }
