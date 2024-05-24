@@ -1,26 +1,24 @@
-<html xmlns="http://www.thymeleaf.org">
-    <head>
-        <title>Add</title>
-        <link rel="stylesheet" href="/css/addcategory.css">
-       
-    </head>
-    <body>
-       
-       
-        
-            <h2> Add category</h2>
-            <form th:action="@{/addCategory}" th:object="${category}" method="POST">
-                <input type="text" th:field="*{name}" placeholder="Enter Category name">
-                <br><br>
-                <input type="submit">
-                <br><br>
-                <a href="/">Go to Home</a>
-               
-            </form>
-        
-        
-        
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+    <title>Add Category</title>
+    <link rel="stylesheet" href="/css/addcategory.css">
+</head>
 
-    </body>
+<body>
+
+    <h2>Add Category</h2>
+    <form th:action="@{/addCategory}" th:object="${category}" method="post">
+
+        <input type="text" th:field="*{name}" placeholder="Enter Category name">
+        <br><br>
+        <input type="submit">
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
+        <br><br>
+        <a href="/">Go to Home</a>
+    </form>
+
+</body>
+
 </html>
