@@ -34,10 +34,10 @@
                     If you haven’t logged in recently and are having trouble,
                     please reset your password to login.</p>
             </h2>
-            <a href="Edit.php"> <button class="acc-buttons"> RESET PASSWORD</button></a>
+            <a href="/user/editpass"> <button class="acc-buttons"> RESET PASSWORD</button></a>
             <br>
             <br>
-            <a href="Delete.php"> <button class="acc-buttons"> Delete Account</button></a>
+            <a href="/user/delete"> <button class="acc-buttons"> Delete Account</button></a>
         </div>
         <form th:action="@{/user/login}" th:object="${user}" method="POST">
             <!-- Your form content here -->
