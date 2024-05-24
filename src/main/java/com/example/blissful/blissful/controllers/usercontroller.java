@@ -84,9 +84,9 @@ public class usercontroller {
         if (existingUser != null) {
             errorMessages.add("Email already exists. Please choose a different email.");
         }
-        // if (!user.getUsername().matches("[a-zA-Z]+")) {
-        // errorMessages.add("Username must contain only letters.");
-        // }
+        if (!user.getUsername().matches("[a-zA-Z]+")) {
+        errorMessages.add("Username must contain only letters.");
+        }
         // Validate password length
         if (user.getPassword().length() < 8) {
             errorMessages.add("Password must be at least 8 characters long.");
@@ -171,10 +171,11 @@ public class usercontroller {
     public ModelAndView logout(HttpSession session) {
         // Invalidate the session to logout the user
         session.invalidate();
-
+    
         // Redirect the user to the login page after logout
         return new ModelAndView("redirect:/user/login");
     }
+    
 
     @GetMapping("/editpass")
     public ModelAndView editpass() {
@@ -232,31 +233,34 @@ public class usercontroller {
         mav.setViewName("redirect:/user/login");
         return mav;
     }
-
     @GetMapping("/delete")
-    public ModelAndView deleteuser() {
+    public ModelAndView deleteUserForm() {
         ModelAndView mav = new ModelAndView("delete.html");
-
-        // Create an empty User object and add it to the model
         mav.addObject("user", new user());
-
         return mav;
     }
-
+    
     @PostMapping("/delete")
-    public ModelAndView deleteUser(@ModelAttribute("user") user user) {
-        ModelAndView mav = new ModelAndView("redirect:/user");
-
+    public ModelAndView deleteUser(@ModelAttribute("user") user user, @RequestParam("password") String password) {
+        ModelAndView mav = new ModelAndView("delete.html");
+    
         user currentUser = userRepository.findByEmail(user.getEmail());
-
-        if (currentUser != null) {
-            userRepository.delete(currentUser);
-            // Optionally, you can add a success message or perform additional actions
-        } else {
-            // Handle case where user is not found
+        if (currentUser == null) {
             mav.addObject("errorMessage", "User not found");
+            return mav;
         }
-
+    
+        boolean passwordMatches = BCrypt.checkpw(password, currentUser.getPassword());
+        if (!passwordMatches) {
+            mav.addObject("errorMessage", "Invalid password");
+            return mav;
+        }
+    
+        userRepository.delete(currentUser);
+        mav.setViewName("redirect:/user/delete");
         return mav;
     }
+    
+    
+    
 }
