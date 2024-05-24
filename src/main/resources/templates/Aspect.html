@@ -1,31 +1,44 @@
-<html xmlns:th="http://wwww.thymleaf.org">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <title>User Logs</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    <!-- userlogs.html -->
-
-    <title>List of User Logs</title>
-    <link rel="stylesheet" th:href="@{/css/list-prod.css}" />
-    <link rel="stylesheet" href="/css/list-users.css">
-
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 
 <body>
+    <h2>User Logs</h2>
     <table>
         <thead>
             <tr>
-                <th>Id</th>
-                <th>UserName</th>
-                <th>Logintime</th>
-                <th>Pages Visited</th>
+                <th>ID</th>
+                <th>User</th>
+                <th>Email</th>
+                <th>Login Time</th>
+                <th>Page Visited</th>
             </tr>
         </thead>
         <tbody>
-            <tr th:each="userLog : ${userLogs}">
-                <td th:text="${userLog.id}" />
-                <td th:text="${userLog.userId}" />
-                <td th:text="${userLog.loginTime}" />
-                <td th:text="${userLog.pageVisited}" />
+            <!-- Iterate over userLogs attribute and display each log -->
+            <tr th:each="log : ${userLogs}">
+                <td th:text="${log.id}"></td>
+                <td th:text="${log.user.username}"></td> <!-- Assuming User entity has a username property -->
+                <td th:text="${log.email}"></td>
+                <td th:text="${log.loginTime}"></td>
+                <td th:text="${log.pageVisited}"></td>
             </tr>
         </tbody>
     </table>

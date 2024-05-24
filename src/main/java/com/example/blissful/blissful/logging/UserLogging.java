@@ -1,7 +1,9 @@
 package com.example.blissful.blissful.logging;
 
 import com.example.blissful.blissful.models.UserLog;
+import com.example.blissful.blissful.models.user;
 import com.example.blissful.blissful.repository.UserLogRepository;
+import com.example.blissful.blissful.repository.userrepo;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -61,7 +63,10 @@ public class UserLogging {
     @Autowired
     private UserLogRepository userLogRepository;
 
-    @Before("execution(* com.example.blissful.blissful.controllers.usercontroller.*(..)) && !execution(* com.example.blissful.blissful.controllers.usercontroller.login(..))")
+    @Autowired
+    private userrepo userRepository; // Assuming you have a UserRepository
+
+    @Before("execution(* com.example.blissful.blissful.controllers.*.*(..)) && !execution(* com.example.blissful.blissful.controllers.usercontroller.login(..))")
     public void beforeUserControllerMethod(JoinPoint joinPoint) {
         // Extract information from the JoinPoint
         String methodName = joinPoint.getSignature().getName();
@@ -75,6 +80,19 @@ public class UserLogging {
                 .currentRequestAttributes()).getRequest().getSession();
         String username = (String) session.getAttribute("username");
 
+        // Retrieve user from UserRepository
+        if (username == null) {
+            System.err.println("No username found in session. Logging aborted.");
+            return;
+        }
+
+        // Retrieve user from UserRepository
+        user user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            System.err.println("User not found in database for username: " + username);
+            return;
+        }
         // Extract information from the request
         jakarta.servlet.http.HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
                 .currentRequestAttributes()).getRequest();
@@ -82,10 +100,7 @@ public class UserLogging {
         Date loginTime = new Date();
 
         // Save user log to the database
-        UserLog userLog = new UserLog();
-        userLog.setUserId(username);
-        userLog.setLoginTime(loginTime);
-        userLog.setPageVisited(pageVisited);
+        UserLog userLog = new UserLog(null, user, user.getEmail(), loginTime, pageVisited);
         userLogRepository.save(userLog);
     }
 }
