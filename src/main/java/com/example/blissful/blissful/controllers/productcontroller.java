@@ -24,6 +24,9 @@ import com.example.blissful.blissful.models.Category;
 import com.example.blissful.blissful.models.product;
 import com.example.blissful.blissful.repository.CategoryRepository;
 import com.example.blissful.blissful.repository.ProductRepository;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -39,7 +42,15 @@ public class productcontroller {
     private ProductRepository productRepository;
 
     @GetMapping("addprod")
-    public ModelAndView addprod() {
+    public ModelAndView addprod(HttpSession session) {
+        String userType = (String) session.getAttribute("type");
+
+        // Check if the user is not logged in or is not an admin
+        if (userType == null || !userType.equals("admin")) {
+            // Redirect to the login page if not logged in or not an admin
+            return new ModelAndView("redirect:/user/login");
+        }
+
         ModelAndView mav = new ModelAndView("addprod.html");
         List<Category> allCategories = this.categoryRepository.findAll();
         mav.addObject("allCategories", allCategories);
@@ -119,19 +130,29 @@ public class productcontroller {
     }
 
     @GetMapping("/deleteprod")
-    public ModelAndView deleteprod() {
-        ModelAndView mav = new ModelAndView("deleteprod.html");
-        List<product> allProducts = productRepository.findAll();
+    public ModelAndView deleteprod(HttpSession session) {
+        ModelAndView mav = new ModelAndView();
+
+        // Check if the user is not logged in or is not an admin
+        String userType = (String) session.getAttribute("type");
+        if (userType == null || !userType.equals("admin")) {
+            // Redirect to the login page if not logged in or not an admin
+            mav.setViewName("redirect:/user/login");
+            return mav;
+        }
+
+        // User is an admin, proceed with the original logic
+        mav.setViewName("deleteprod.html");
+        List<product> allProducts = productRepository.findAll(); // Ensure class name starts with an uppercase letter
         mav.addObject("allProducts", allProducts);
         return mav;
     }
-
     @PostMapping("/deleteprod")
-    public String deleteprod(@RequestParam("productName") String productName) {
+    public String deleteprod(@RequestParam("productName") String productName, Model model) {
         try {
             // Retrieve the product(s) by its name
             List<product> productList = productRepository.findAllByName(productName);
-
+    
             if (!productList.isEmpty()) {
                 // Delete each product from the repository
                 for (product prod : productList) {
@@ -145,17 +166,18 @@ public class productcontroller {
                         }
                     }
                 }
+                return "redirect:/"; // Redirect to home page after successful operation
             } else {
                 // Handle case where product(s) with given name do not exist
-                System.out.println("Product(s) not found");
-                return "error";
+                model.addAttribute("errorMessage", "Product not found");
+                return "deleteprod"; // Return to the same page to show the error message
             }
         } catch (Exception e) {
             e.printStackTrace();
             // Handle other exceptions
-            return "error";
+            model.addAttribute("errorMessage", "An error occurred while deleting the product");
+            return "deleteprod"; // Return to the same page to show the error message
         }
-        return "redirect:/"; // Redirect to home page after successful operation
     }
 
 }

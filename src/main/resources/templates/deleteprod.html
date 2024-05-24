@@ -16,6 +16,10 @@
             </div>
             <button type="submit">Delete Product</button>
         </form>
+        <!-- Display the error message if it exists -->
+        <div class="error-message" style="color: red;">
+            <p th:if="${errorMessage != null}" th:text="${errorMessage}"></p>
+        </div>
     </div>
 </body>
 </html>

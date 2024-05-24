@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ProductTest {
@@ -33,6 +34,8 @@ public class ProductTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+    @Mock
+    private Model model;
 
     @BeforeEach
     public void setup() {
@@ -94,5 +97,63 @@ public class ProductTest {
         assertEquals("redirect:/", viewName); // Assuming the controller returns "addprod" in case of errors
         assertFalse(bindingResult.hasErrors());
         // assertNotNull(bindingResult.getFieldError("price"));
+    }
+
+    @Test
+    public void testDeleteProduct() {
+        // Mock necessary objects
+        String productName = "TestProduct";
+        product product1 = new product();
+        product1.setName(productName);
+        List<product> productList = new ArrayList<>();
+        productList.add(product1);
+
+        // Mock behavior of the productRepository
+        when(productRepository.findAllByName(productName)).thenReturn(productList);
+
+        // Call the method
+        String result = productController.deleteprod(productName, model);
+
+        // Verify behavior
+        assertEquals("redirect:/", result); // Assuming the controller returns "redirect:/" after successful deletion
+        verify(productRepository, times(1)).delete(product1);
+    }
+
+    @Test
+    public void testDeleteProduct_ProductNotFound() {
+        // Mock necessary objects
+        String productName = "NonExistingProduct";
+
+        // Mock behavior of the productRepository
+        when(productRepository.findAllByName(productName)).thenReturn(new ArrayList<>());
+
+        // Call the method
+        String result = productController.deleteprod(productName, model);
+
+        // Verify behavior
+        assertEquals("deleteprod", result); // Assuming the controller returns "deleteprod" when the product is not found
+        verify(productRepository, never()).delete(any());
+        verify(model, times(1)).addAttribute("errorMessage", "Product not found");
+    }
+
+    @Test
+    public void testDeleteProduct_Exception() {
+        // Mock necessary objects
+        String productName = "TestProduct";
+        product product1 = new product();
+        product1.setName(productName);
+        List<product> productList = new ArrayList<>();
+        productList.add(product1);
+
+        // Mock behavior of the productRepository to throw an exception
+        when(productRepository.findAllByName(productName)).thenThrow(new RuntimeException());
+
+        // Call the method
+        String result = productController.deleteprod(productName, model);
+
+        // Verify behavior
+        assertEquals("deleteprod", result); // Assuming the controller returns "deleteprod" when an exception occurs
+        verify(productRepository, never()).delete(any());
+        verify(model, times(1)).addAttribute("errorMessage", "An error occurred while deleting the product");
     }
 }
