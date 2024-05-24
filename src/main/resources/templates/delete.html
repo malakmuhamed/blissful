@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -9,9 +10,15 @@
 
 <body>
     <form th:action="@{/user/delete}" method="POST" th:object="${user}">
-        <input type="email" name="email" th:value="*{email}">
+        <input type="email" name="email" th:value="*{email}" placeholder="Enter your email" required>
+        <input type="password" name="password" placeholder="Enter your password" required>
         <button type="submit">Delete User</button>
     </form>
+
+    <!-- Error message handling -->
+    <div th:if="${errorMessage}" class="error-message">
+        <p th:text="${errorMessage}"></p>
+    </div>
 </body>
 
 </html>
