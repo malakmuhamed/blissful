@@ -19,6 +19,7 @@ import com.example.blissful.blissful.repository.userrepo;
 import javax.servlet.http.HttpSession;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class UserControllerTest {
@@ -43,7 +44,9 @@ public class UserControllerTest {
         newUser.setUsername("testuser"); // Ensure username is set
         newUser.setPassword("123"); // Password length less than 8 characters
         String confirmPassword = "123";
-    
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -10); // Ensure the date is more than 8 years ago
+        newUser.setDob(cal.getTime());
         // Call the method to be tested
         ModelAndView mav = userController.saveUser(newUser, bindingResult, confirmPassword, null);
     
@@ -62,7 +65,9 @@ public void testSaveUser_WithMismatchedPasswords_ReturnsError() {
     newUser.setUsername("testuser");
     newUser.setPassword("12345679");
     String confirmPassword = "12345678"; // Confirm password doesn't match
-
+    Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.YEAR, -10); // Ensure the date is more than 8 years ago
+    newUser.setDob(cal.getTime());
     // Call the method to be tested
     ModelAndView mav = userController.saveUser(newUser, bindingResult, confirmPassword, null);
 
@@ -73,6 +78,28 @@ public void testSaveUser_WithMismatchedPasswords_ReturnsError() {
     assertEquals(1, errorMessages.size()); // Expecting one error message
     assertEquals("Passwords do not match.", errorMessages.get(0)); // Verify the specific error message
 }
+@Test
+public void testSaveUser_Withwrondob() {
+    // Prepare test data
+    user newUser = new user();
+    newUser.setEmail("test@example.com");
+    newUser.setUsername("testuser");
+    newUser.setPassword("12345678");
+    String confirmPassword = "12345678"; // Confirm password doesn't match
+    // Set DOB to a date less than 8 years ago
+    Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.YEAR, -5); // Set the date to 5 years ago
+    newUser.setDob(cal.getTime());
+    // Call the method to be tested
+    ModelAndView mav = userController.saveUser(newUser, bindingResult, confirmPassword, null);
+
+    // Assert the result
+    assertEquals("registeration.html", mav.getViewName()); // Should return to registration page
+    assertTrue(mav.getModel().containsKey("errorMessages")); // Expecting error messages
+    List<String> errorMessages = (List<String>) mav.getModel().get("errorMessages");
+    assertEquals(1, errorMessages.size()); // Expecting one error message
+    assertEquals("You must be at least 8 years old to register.", errorMessages.get(0)); // Verify the specific error message
+}
 
 
 @Test
@@ -81,8 +108,11 @@ public void testSaveUser_WithExistingEmail_ReturnsError() {
     user existingUser = new user();
     existingUser.setEmail("shahd@gmail.com");
     existingUser.setPassword("password");
-    existingUser.setUsername("testuser"); // Ensure username is set
-    
+    existingUser.setUsername("testuser");
+    // Ensure username is set
+    Calendar cal = Calendar.getInstance();
+    cal.add(Calendar.YEAR, -10); // Ensure the date is more than 8 years ago
+    existingUser.setDob(cal.getTime());
     String confirmPassword = "password";
     
     // Mock repository behavior

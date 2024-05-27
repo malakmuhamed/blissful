@@ -1,6 +1,7 @@
 package com.example.blissful.blissful.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -90,6 +91,16 @@ public class usercontroller {
         // Validate password length
         if (user.getPassword().length() < 8) {
             errorMessages.add("Password must be at least 8 characters long.");
+        }
+        
+        if (user.getDob() != null) {
+            long ageInMillis = new Date().getTime() - user.getDob().getTime();
+            long ageInYears = (long) (ageInMillis / (1000L * 60 * 60 * 24 * 365));
+            if (ageInYears < 8) {
+                errorMessages.add("You must be at least 8 years old to register.");
+            }
+        } else {
+            errorMessages.add("Date of birth is required.");
         }
 
         // Confirm password validation

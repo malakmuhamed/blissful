@@ -3,6 +3,8 @@ package com.example.blissful.blissful.models;
 import java.util.Date;
 import java.util.Objects;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,12 +19,14 @@ public class user {
     private String username;
     private String email;
     private String password;
-    private String dob;
+   // private String dob;
+     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dob;
 
     public user() {
     }
 
-    public user(int id, String type, String username, String email, String password, String dob) {
+    public user(int id, String type, String username, String email, String password, Date dob) {
         this.id = id;
         this.type = type;
         this.username = username;
@@ -71,11 +75,11 @@ public class user {
         this.password = password;
     }
 
-    public String getDob() {
+    public Date getDob() {
         return this.dob;
     }
 
-    public void setDob(String dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
 
@@ -104,7 +108,7 @@ public class user {
         return this;
     }
 
-    public user dob(String dob) {
+    public user dob(Date dob) {
         setDob(dob);
         return this;
     }
@@ -117,9 +121,7 @@ public class user {
             return false;
         }
         user user = (user) o;
-        return id == user.id && Objects.equals(type, user.type) && Objects.equals(username, user.username)
-                && Objects.equals(email, user.email) && Objects.equals(password, user.password)
-                && Objects.equals(dob, user.dob);
+        return id == user.id && Objects.equals(type, user.type) && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(dob, user.dob);
     }
 
     @Override
@@ -130,17 +132,13 @@ public class user {
     @Override
     public String toString() {
         return "{" +
-                " id='" + getId() + "'" +
-                ", type='" + getType() + "'" +
-                ", username='" + getUsername() + "'" +
-                ", email='" + getEmail() + "'" +
-                ", password='" + getPassword() + "'" +
-                ", dob='" + getDob() + "'" +
-                "}";
-    }
-
-    public void setLastLogin(Date date) {
-        throw new UnsupportedOperationException("Unimplemented method 'setLastLogin'");
+            " id='" + getId() + "'" +
+            ", type='" + getType() + "'" +
+            ", username='" + getUsername() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", dob='" + getDob() + "'" +
+            "}";
     }
 
 }
