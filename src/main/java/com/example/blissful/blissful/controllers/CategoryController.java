@@ -219,5 +219,6 @@ public class CategoryController {
         return "redirect:/category/" + existingProduct.getCategory().getId(); // Redirect to the category page after
                                                                               // successful update
     }
+    
 
 }

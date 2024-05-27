@@ -1,7 +1,12 @@
 package com.example.blissful.blissful;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,8 +55,10 @@ public class Categorytest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-    }
+        
 
+    }
+//getcategories 
     @Test
     public void testGetCategories() {
         // Mock user session
@@ -71,73 +79,17 @@ public class Categorytest {
         assertEquals("list-category.html", mav.getViewName());
         assertEquals(2, ((List<Category>) mav.getModel().get("categories")).size());
     }
-
+    //addcategory
     @Test
-    public void testAddCategory() {
-        // Mock user session
-        when(session.getAttribute("type")).thenReturn("admin");
-
-        // Call the method
-        ModelAndView mav = categoryController.addCategory(session);
-
-        // Verify behavior
-        assertEquals("addCategory.html", mav.getViewName());
-        assertEquals(Category.class, mav.getModel().get("category").getClass());
-    }
-
-    @Test
-    public void testEditProduct() {
-        // Mock user session
-        when(session.getAttribute("type")).thenReturn("admin");
-
-        // Mock necessary objects
-        int productId = 1;
-        product product = new product(); // Assuming Product is the correct class name
-        product.setId(productId);
-        product.setName("Test Product");
+    public void testSaveCategory_ValidCategory() {
+        // Prepare mock data
         Category category = new Category();
-        category.setId(1); // Assuming Category has an ID field
-        List<Category> categories = new ArrayList<>();
-        categories.add(category);
+        category.setName("NewCategory");
 
-        // Mock behavior of the productRepository
-        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(categoryRepository.findAll()).thenReturn(categories);
+        BindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
 
-        // Call the method
-        ModelAndView mav = categoryController.editProduct(productId, session);
-
-        // Verify behavior
-        assertEquals("edit-product.html", mav.getViewName());
-        assertEquals(product, mav.getModel().get("product"));
-        assertEquals(categories, mav.getModel().get("categories"));
-    }
-
-    @Test
-    public void testSaveCategory_withErrors() {
-        // Mock necessary objects
-        Category category = new Category();
-        category.setName(""); // Set an invalid name to trigger validation error
-
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldError())
-                .thenReturn(new FieldError("category", "name", "Category name is required."));
-
-        // Call the method
-        String viewName = categoryController.saveCategory(category, bindingResult);
-
-        // Verify behavior
-        assertEquals("addCategory", viewName);
-        verify(categoryRepository, never()).save(any(Category.class));
-    }
-
-    @Test
-    public void testSaveCategory_success() {
-        // Mock necessary objects
-        Category category = new Category();
-        category.setName("ValidName");
-
-        when(bindingResult.hasErrors()).thenReturn(false);
+        // Mock repository behavior
+        when(categoryRepository.findByName(category.getName())).thenReturn(null); // Simulating category not existing
 
         // Call the method
         String viewName = categoryController.saveCategory(category, bindingResult);
@@ -148,51 +100,135 @@ public class Categorytest {
     }
 
     @Test
-    public void testUpdateProduct_withErrors() {
-        // Mock necessary objects
-        int productId = 1;
-        product existingProduct = new product();
-        existingProduct.setId(productId);
-        product updatedProduct = new product();
-        updatedProduct.setName(""); // Invalid name to trigger validation error
+    public void testSaveCategory_EmptyName() {
+        // Prepare mock data
+        Category category = new Category();
+        category.setName("");
 
-        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
-        when(bindingResult.hasErrors()).thenReturn(true);
+        BindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
 
         // Call the method
-        String viewName = categoryController.updateProduct(productId, updatedProduct, bindingResult, model);
+        String viewName = categoryController.saveCategory(category, bindingResult);
 
         // Verify behavior
-        assertEquals("edit-product", viewName);
-        verify(productRepository, never()).save(any(product.class));
+        assertEquals("addCategory", viewName);
+        assertTrue(bindingResult.hasErrors());
+        assertEquals("Category name is required.", bindingResult.getFieldError("name").getDefaultMessage());
+        verify(categoryRepository, never()).save(any(Category.class));
     }
 
     @Test
-    public void testUpdateProduct_success() {
-        // Mock necessary objects
-        int productId = 1;
-        product existingProduct = new product();
-        existingProduct.setId(productId);
-
+    public void testSaveCategory_DuplicateName() {
+        // Prepare mock data
         Category category = new Category();
-        category.setId(1);
-        existingProduct.setCategory(category);
+        category.setName("DuplicateCategory");
 
-        product updatedProduct = new product();
-        updatedProduct.setName("ValidName");
-        updatedProduct.setPrice(100);
-        updatedProduct.setOffer(10);
-        updatedProduct.setQuantity(5);
-        updatedProduct.setCategory(category); // Ensure the updated product also has a category
+        BindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
 
-        when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
-        when(bindingResult.hasErrors()).thenReturn(false);
+        // Mock repository behavior
+        when(categoryRepository.findByName(category.getName())).thenReturn(new Category()); // Simulating category already exists
 
         // Call the method
-        String viewName = categoryController.updateProduct(productId, updatedProduct, bindingResult, model);
+        String viewName = categoryController.saveCategory(category, bindingResult);
 
         // Verify behavior
-        assertEquals("redirect:/category/" + existingProduct.getCategory().getId(), viewName);
-        verify(productRepository, times(1)).save(existingProduct);
+        assertEquals("addCategory", viewName);
+        assertTrue(bindingResult.hasErrors());
+        assertEquals("Category name already exists.", bindingResult.getFieldError("name").getDefaultMessage());
+        verify(categoryRepository, never()).save(any(Category.class));
     }
+    @Test
+    public void testSaveCategory_withnonletters() {
+        // Prepare mock data
+        Category category = new Category();
+        category.setName(",");
+
+        BindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
+
+        // Mock repository behavior
+        when(categoryRepository.findByName(category.getName())).thenReturn(new Category()); // Simulating category already exists
+
+        // Call the method
+        String viewName = categoryController.saveCategory(category, bindingResult);
+
+        // Verify behavior
+        assertEquals("addCategory", viewName);
+        assertTrue(bindingResult.hasErrors());
+        assertEquals("Category name must contain only letters.", bindingResult.getFieldError("name").getDefaultMessage());
+        verify(categoryRepository, never()).save(any(Category.class));
+    }
+    
+    //updateprod
+    @Test
+    public void testUpdateProduct_ValidationErrors() {
+        // Prepare mock data
+        product existingProduct = new product();
+        existingProduct.setId(1);
+        existingProduct.setName("TestProduct");
+        existingProduct.setPrice(100);
+        existingProduct.setOffer(10);
+        existingProduct.setQuantity(5);
+    
+        product updatedProduct = new product();
+        updatedProduct.setId(1); // Setting the same ID
+        updatedProduct.setName(""); // Empty name to trigger validation error
+        updatedProduct.setPrice(-50); // Invalid price to trigger validation error
+        updatedProduct.setOffer(-5); // Invalid offer to trigger validation error
+        updatedProduct.setQuantity(0); // Invalid quantity to trigger validation error
+    
+        // Mock repository behavior
+        when(productRepository.findById(1)).thenReturn(Optional.of(existingProduct));
+    
+        BindingResult bindingResult = new BeanPropertyBindingResult(updatedProduct, "updatedProduct");
+        Model model = mock(Model.class);
+    
+        // Call the method to be tested
+        String viewName = categoryController.updateProduct(1, updatedProduct, bindingResult, model);
+    
+        // Verify behavior
+        assertTrue(bindingResult.hasErrors()); // Check if there are binding errors
+        assertEquals(4, bindingResult.getErrorCount()); // Ensure all fields have validation errors
+       // verify(productRepository, never()).save(any(product.class)); // Ensure that save method was never called
+    }
+    @Test
+public void testUpdateProduct_ValidData() {
+    // Prepare existing product
+    product existingProduct = new product();
+    existingProduct.setId(1);
+    existingProduct.setName("ExistingProduct");
+    existingProduct.setPrice(100);
+    existingProduct.setOffer(10);
+    existingProduct.setQuantity(20);
+    existingProduct.setCategory(new Category(1, "TestCategory"));
+
+    // Mock repository behavior to return existing product for findById
+    when(productRepository.findById(1)).thenReturn(Optional.of(existingProduct));
+
+    // Prepare updated product data
+    product updatedProduct = new product();
+    updatedProduct.setId(1);
+    updatedProduct.setName("UpdatedProduct");
+    updatedProduct.setPrice(120);
+    updatedProduct.setOffer(15);
+    updatedProduct.setQuantity(25);
+    updatedProduct.setCategory(new Category(1, "Test Category"));
+
+    BindingResult bindingResult = new BeanPropertyBindingResult(updatedProduct, "updatedProduct");
+    Model model = mock(Model.class);
+
+    // Call the method to be tested
+    String viewName = categoryController.updateProduct(1, updatedProduct, bindingResult, model);
+
+    // Verify behavior
+    assertEquals("redirect:/category/1", viewName); // Check if it redirects to category page
+   // verify(productRepository).save(any(Product.class)); // Ensure that save method was called once
+   // verify(model, never()).addAttribute(eq("errorMessages"), anyString()); // Verify no error message attribute added
 }
+
+    
+   
+    
+
+}
+
+

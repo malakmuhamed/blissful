@@ -41,7 +41,7 @@ public class ProductTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
     }
-
+//addprod
     @Test
     public void testValidation() {
         // Mock necessary objects

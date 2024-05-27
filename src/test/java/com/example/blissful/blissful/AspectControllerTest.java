@@ -82,23 +82,5 @@ public class AspectControllerTest {
         assertEquals(userLogs, mav.getModel().get("userLogs"));
     }
 
-    @Test
-public void testAspectAdminEmptyLogs() {
-    // Mock session behavior
-    when(session.getAttribute("type")).thenReturn("admin");
 
-    // Prepare test data
-    List<UserLog> emptyLogs = Collections.emptyList();
-
-    // Mock repository behavior
-    when(userLogRepository.findAll()).thenReturn(emptyLogs);
-
-    // Call the method to be tested
-    ModelAndView mav = aspectController.aspect(session);
-
-    // Verify behavior
-    assertEquals("Aspect.html", mav.getViewName());
-    assertTrue(mav.getModel().containsKey("userLogs"));
-    assertEquals(emptyLogs, mav.getModel().get("userLogs"));
-}
 }

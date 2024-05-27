@@ -301,7 +301,7 @@ public void testSearchUsers_WithAdminSession_ReturnsSearchResults() {
     ModelAndView mav = userController.searchUsers(searchUsername, session);
 
     // Assert the result
-    assertEquals("list-users.html", mav.getViewName());
+   assertEquals("list-users.html", mav.getViewName());
     assertEquals(mockUsers, mav.getModel().get("userslist"));
     assertEquals(searchUsername, mav.getModel().get("searchedUsername"));
 }
