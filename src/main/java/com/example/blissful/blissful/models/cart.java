@@ -1,55 +1,27 @@
 package com.example.blissful.blissful.models;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class cart {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
-    private Long userId;
-    private List<Long> productIds;
+@Entity
+public class Cart {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer cartId;
 
-    public cart() {
-    }
+    @OneToOne
+    private user user;
 
-    public cart(Long userId, List<Long> productIds) {
-        this.userId = userId;
-        this.productIds = productIds;
-    }
+    @OneToMany(mappedBy = "cart")
+    private List<CartItem> items;
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public List<Long> getProductIds() {
-        return productIds;
-    }
-
-    public void setProductIds(List<Long> productIds) {
-        this.productIds = productIds;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        cart cart = (cart) o;
-        return Objects.equals(userId, cart.userId) && Objects.equals(productIds, cart.productIds);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId, productIds);
-    }
-
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "userId=" + userId +
-                ", productIds=" + productIds +
-                '}';
-    }
 }
