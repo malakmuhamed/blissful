@@ -79,4 +79,17 @@ public Cart addToCart(Integer userId, Integer productId, int quantity) {
 
     return cart;
 }
+public void editCartItemQuantity(Integer cartItemId, Integer quantity) {
+    CartItem cartItem = cartItemRepo.findById(cartItemId).orElse(null);
+    if (cartItem != null) {
+        cartItem.setQuantity(quantity);
+        cartItemRepo.save(cartItem);
+    }
+}
+
+public void deleteCartItem(Integer cartItemId) {
+    CartItem cartItem = cartItemRepo.findById(cartItemId)
+        .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        cartItemRepo.delete(cartItem);
+}
 }

@@ -21,10 +21,31 @@
                     <tbody>
                         <tr th:each="cartItem : ${cartItems}">
                             <td th:text="${cartItem.product.name}"></td>
-                            <td th:text="${cartItem.quantity}"></td>
+                            <td>
+                                <form th:action="@{/cart/edit}" method="post">
+                                    <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
+                                    <input type="number" name="quantity" th:value="${cartItem.quantity}">
+                                    <button type="submit">Edit</button>
+                                </form>
+                            </td>
                             <td th:text="'$' + ${cartItem.product.price}"></td>
+                            <td>
+                                <td>
+                                    ...
+
+    <form id="deleteForm" th:action="@{/cart/delete}" method="post">
+        <input type="hidden" name="cartItemId" th:value="${cartItem.id}">
+        <button type="button" onclick="deleteCartItem(this)">Delete</button>
+    </form>
+
+
+
+                                </td>
+                                
+                            </td>
                         </tr>
                     </tbody>
+                    
                 </table>
                 <h3>Total: $<span th:text="${totalPrice}"></span></h3>
                 <form th:action="@{/checkout}" method="post">
@@ -33,5 +54,23 @@
             </div>
         </div>
     </div>
+    <script>
+        function deleteCartItem(button) {
+    var cartItemId = button.parentNode.querySelector('input[name="cartItemId"]').value;
+
+    // AJAX request to delete the cart item
+    var xhr = new XMLHttpRequest();
+    xhr.open("DELETE", "/cart/delete?cartItemId=" + cartItemId);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Optionally, you can handle the response here
+            // For example, you can reload the page or update the cart dynamically
+            window.location.reload(); // Reload the page after successful deletion
+        }
+    };
+    xhr.send();
+}
+
+    </script>
 </body>
 </html>

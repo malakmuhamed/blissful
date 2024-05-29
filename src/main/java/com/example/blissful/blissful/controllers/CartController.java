@@ -10,7 +10,9 @@ import com.example.blissful.blissful.service.CartService;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
@@ -58,5 +60,17 @@ public class CartController {
         }
     }
     
-
+   
+    @PostMapping("/cart/edit")
+    public ModelAndView editCartItemQuantity(@RequestParam("cartItemId") Integer cartItemId, 
+                                             @RequestParam("quantity") Integer quantity) {
+        cartService.editCartItemQuantity(cartItemId, quantity);
+        return new ModelAndView("redirect:/cart"); // Redirect to the cart view after editing
+    }
+    @DeleteMapping("/cart/delete")
+    public ModelAndView deleteCartItem(@RequestParam("cartItemId") Integer cartItemId) {
+        cartService.deleteCartItem(cartItemId);
+        // Redirect to the cart view
+        return new ModelAndView("redirect:/cart");
+    }
 }

@@ -132,41 +132,43 @@ public class usercontroller {
     public ModelAndView login(@ModelAttribute("user") @Validated user user, BindingResult bindingResult,
             HttpSession session) {
         ModelAndView mav = new ModelAndView("login.html");
-
+    
         if (bindingResult.hasErrors()) {
             // Handle validation errors
             mav.addObject("errorMessage", "Invalid email or password");
             return mav;
         }
-
+    
         user myUser = this.userRepository.findByEmail(user.getEmail());
         if (myUser != null) {
             boolean match = BCrypt.checkpw(user.getPassword(), myUser.getPassword());
             if (match) {
+                session.setAttribute("userId", myUser.getId()); // Store user ID in session
                 session.setAttribute("username", myUser.getUsername());
                 String userType = myUser.getType();
                 session.setAttribute("type", userType);
                 if (userType.equals("admin")) {
-                    return new ModelAndView("redirect:/user/admindashboard");
+                    return new ModelAndView("redirect:/admindashboard");
                 } else {
                     return new ModelAndView("redirect:/home");
                 }
             }
         }
-
+    
         // Handle login failure
         mav.addObject("errorMessage", "Invalid email or password");
         return mav;
     }
-
-    @GetMapping("/login")
-    public ModelAndView loginForm(HttpSession session) {
-        ModelAndView mav = new ModelAndView("login.html");
-        String username = (String) session.getAttribute("username");
-        mav.addObject("user", new user());
-        mav.addObject("username", username);
-        return mav;
-    }
+    
+    
+        @GetMapping("/login")
+        public ModelAndView loginForm(HttpSession session) {
+            ModelAndView mav = new ModelAndView("login.html");
+            String username = (String) session.getAttribute("username");
+            mav.addObject("user", new user());
+            mav.addObject("username", username);
+            return mav;
+        }
 
     @GetMapping("/admindashboard")
     public ModelAndView getAdminDashboard(HttpSession session) {
