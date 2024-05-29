@@ -21,15 +21,22 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @GetMapping("/cart")
-    public String showForm(Model model) {
-        model.addAttribute("cart", new cart());
-        return "cart";
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
     }
 
-    @PostMapping("/cart")
-    public String submitForm(@ModelAttribute cart cart) {
-        // Process the billing info (e.g., save to database)
-        return "done";
+    @GetMapping("/cart")
+    public ModelAndView viewCart(HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            return new ModelAndView("redirect:/user/login"); // Redirect to login if user is not logged in
+        }
+
+        List<CartItem> cartItems = cartService.getCartItemsByUserId(userId);
+        Cart cart = cartService.getCartByUserId(userId); // Get the cart by userId
+        ModelAndView modelAndView = new ModelAndView("AddtoCart"); // Assuming the template is named "AddtoCart.html"
+        modelAndView.addObject("cartItems", cartItems);
+        modelAndView.addObject("totalPrice", cart.getTotalPrice()); // Add total price to the model
+        return modelAndView;
     }
 }
