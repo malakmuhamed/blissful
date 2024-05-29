@@ -23,5 +23,28 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> items;
+// Default constructor
+public Cart() {
+    this.items = new ArrayList<>(); // Ensure items is initialized
+}
+
+// Constructor with user
+public Cart(user user) {
+    this.user = user;
+    this.items = new ArrayList<>(); // Initialize items as an ArrayList
+}
+
+// Getters and Setters
+public Integer getCartId() {
+    return cartId;
+}
+
+public void setCartId(Integer cartId) {
+    this.cartId = cartId;
+}
+
+public user getUser() {
+    return user;
+}
 
 }
