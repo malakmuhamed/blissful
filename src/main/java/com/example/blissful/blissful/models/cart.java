@@ -47,4 +47,24 @@ public user getUser() {
     return user;
 }
 
+public void setUser(user user) {
+    this.user = user;
 }
+
+public List<CartItem> getItems() {
+    return items;
+}
+
+public void setItems(List<CartItem> items) {
+    this.items = items;
+}
+
+// Method to calculate the total price
+public double getTotalPrice() {
+    return items.stream()
+            .filter(item -> item.getProduct() != null && item.getProduct().getPrice() >= 0) // Ensure product and price are not null
+            .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+            .sum();
+}
+}
+
