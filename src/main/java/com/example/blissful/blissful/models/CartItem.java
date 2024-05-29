@@ -19,6 +19,27 @@ public class CartItem {
     private Cart cart;
 
     private int quantity;
+ // Constructors
+ public CartItem() {
+}
 
+public CartItem(product product, Cart cart, int quantity) {
+    this.product = product;
+    this.cart = cart;
+    this.quantity = quantity;
+}
+
+// Getters and Setters
+public Integer getId() {
+    return id;
+}
+
+public void setId(Integer id) {
+    this.id = id;
+}
+
+public product getProduct() {
+    return product;
+}
     
 }
