@@ -39,4 +39,15 @@ public class CartController {
         modelAndView.addObject("totalPrice", cart.getTotalPrice()); // Add total price to the model
         return modelAndView;
     }
+    @GetMapping("/addToCart")
+    public ModelAndView addToCart(@RequestParam(name = "productId") Integer productId, @RequestParam(name = "quantity", defaultValue = "1") int quantity, HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId == null) {
+            // Handle case where user is not logged in
+            return new ModelAndView("redirect:/login");
+        }
+        try {
+            cartService.addToCart(userId, productId, quantity);
+            return new ModelAndView("redirect:/cart"); // Redirect to the cart view after adding to the cart
+        }
 }
