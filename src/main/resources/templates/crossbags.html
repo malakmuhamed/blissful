@@ -1,4 +1,5 @@
-<html xmlns:th="http://wwww.thymleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
@@ -23,11 +24,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- 
-    - preload images
-  -->
-  
-
 </head>
 
 <body id="top">
@@ -36,9 +32,6 @@
     - #HEADER
   -->
   <div th:replace="fragments/header :: header"></div>
-  
-
-        
 
   <!-- 
     - #MOBILE NAVBAR
@@ -86,66 +79,37 @@
     <div class="overlay" data-nav-toggler data-overlay></div>
   </div>
 
+  <!-- 
+    - #COLLECTION
+  -->
 
-  
-<!-- 
-        - #COLLECTION
-      -->
+  <section class="section collection" id="collection" aria-label="collection" data-section>
+    <div class="container">
+      <ul class="collection-list">
+        <li th:each="crossbagprod: ${crossbagsProducts}">
+          <div class="collection-card has-before hover:shine">
+            <h2 class="h2 card-title" th:text="${crossbagprod.name}"></h2>
+            <p class="card-text" th:text="'Starting at $' + ${crossbagprod.price}"></p>
 
-      <section class="section collection" id="collection" aria-label="collection" data-section>
+            <!-- Thymeleaf Template -->
+            <form th:action="@{/addToCart}" method="get">
+              <input type="hidden" name="productId" th:value="${crossbagprod.id}" />
+              <label for="quantity">Quantity:</label>
+              <input type="number" id="quantity" name="quantity" min="1" value="1" />
+              <button type="submit" class="btn-link">
+                <span class="span">Shop Now</span>
+                <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+              </button>
+            </form>
 
-        <div class="container" >
-
-          <ul class="collection-list">
-
-            <li th:each="crossbagprod: ${crossbagsProducts}">
-              <div class="collection-card has-before hover:shine" >
-
-          <h2 class="h2 card-title" th:text="${crossbagprod.name}"></h2>
-
-          <p class="card-text" th:text="'Starting at $' + ${crossbagprod.price}"></p>
-
-          <a href="#" class="btn-link">
-            <span class="span">Shop Now</span>
-            <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
-          </a>
-          <div class="has-bg-image">
-            <img th:src="@{/images/{photo}(photo=${crossbagprod.photo})}" alt="Product Photo">
-
-        </div>
-        
-      
-
-        </div>
-            </li>
-
-           
-
-          </ul>
-
-        </div>
-      </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            <div class="has-bg-image">
+              <img th:src="@{/images/{photo}(photo=${crossbagprod.photo})}" alt="Product Photo">
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
 
   <script src="/js/script.js" defer></script>
 
