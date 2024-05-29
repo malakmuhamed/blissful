@@ -26,5 +26,30 @@ public class CartService {
     private ProductRepository productRepo;
     @Autowired
     private userrepo userRepo;
+// Method to get cart by userId
+public Cart getCartByUserId(Integer userId) {
+    user user = userRepo.findById(userId).orElse(null);
+    if (user == null) {
+        throw new RuntimeException("User not found");
+    }
 
+    Optional<Cart> optionalCart = cartRepo.findByUser(user);
+    return optionalCart.orElseGet(() -> new Cart(user));
+}
+
+// Method to get cart items by userId
+public List<CartItem> getCartItemsByUserId(Integer userId) {
+    user user = userRepo.findById(userId).orElse(null);
+    if (user == null) {
+        throw new RuntimeException("User not found");
+    }
+
+    Optional<Cart> optionalCart = cartRepo.findByUser(user);
+    if (optionalCart.isPresent()) {
+        Cart cart = optionalCart.get();
+        return cartItemRepo.findByCart(cart);
+    } else {
+        return List.of(); // Return an empty list if no cart exists
+    }
+}
 }
