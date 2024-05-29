@@ -52,4 +52,31 @@ public List<CartItem> getCartItemsByUserId(Integer userId) {
         return List.of(); // Return an empty list if no cart exists
     }
 }
+public Cart addToCart(Integer userId, Integer productId, int quantity) {
+    product product = productRepo.findById(productId).orElse(null);
+    if (product == null) {
+        throw new RuntimeException("Product not found");
+    }
+
+    user user = userRepo.findById(userId).orElse(null);
+    if (user == null) {
+        throw new RuntimeException("User not found");
+    }
+
+    Optional<Cart> optionalCart = cartRepo.findByUser(user);
+    Cart cart;
+    if (optionalCart.isPresent()) {
+        cart = optionalCart.get();
+    } else {
+        cart = new Cart(user);
+        cartRepo.save(cart);
+    }
+
+    CartItem cartItem = cartItemRepo.findByCartAndProduct(cart, product)
+        .orElse(new CartItem(product, cart, 0));
+    cartItem.setQuantity(cartItem.getQuantity() + quantity);
+    cartItemRepo.save(cartItem);
+
+    return cart;
+}
 }
