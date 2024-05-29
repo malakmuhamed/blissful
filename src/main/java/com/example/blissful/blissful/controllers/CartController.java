@@ -50,4 +50,12 @@ public class CartController {
             cartService.addToCart(userId, productId, quantity);
             return new ModelAndView("redirect:/cart"); // Redirect to the cart view after adding to the cart
         }
+        catch (Exception e) {
+            // Handle exception and show error message
+            ModelAndView modelAndView = new ModelAndView("error");
+            modelAndView.addObject("message", e.getMessage());
+            return modelAndView;
+        }
+    }
+
 }
